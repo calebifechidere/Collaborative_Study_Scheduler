@@ -1,0 +1,55 @@
+Table users {
+  user_id integer [pk, increment]
+  full_name varchar(100) [not null]
+  email varchar(100) [not null, unique]
+  course varchar(100) [not null]
+  student_level varchar(30) [not null]
+}
+
+Table study_groups {
+  group_id integer [pk, increment]
+  course_code varchar(20) [not null]
+  group_name varchar(100) [not null]
+  created_by integer [not null]
+  created_at timestamp
+}
+
+Table group_members {
+  group_id integer [pk]
+  user_id integer [pk]
+  joined_date timestamp
+}
+
+Table availability {
+  availability_id integer [pk, increment]
+  user_id integer [not null]
+  day_of_week integer [not null]
+  start_time time [not null]
+  end_time time [not null]
+}
+
+Table study_sessions {
+  session_id integer [pk, increment]
+  group_id integer [not null]
+  topic varchar(150) [not null]
+  session_date date [not null]
+  start_time time [not null]
+  end_time time [not null]
+  location varchar(100) [not null]
+  meeting_link varchar(255)
+  status varchar(20) [not null]
+}
+
+Table attendance {
+  session_id integer [pk]
+  user_id integer [pk]
+  attendance_status varchar(20) [not null]
+}
+
+Ref: study_groups.created_by > users.user_id
+Ref: group_members.group_id > study_groups.group_id
+Ref: group_members.user_id > users.user_id
+Ref: availability.user_id > users.user_id
+Ref: study_sessions.group_id > study_groups.group_id
+Ref: attendance.session_id > study_sessions.session_id
+Ref: attendance.user_id > users.user_id

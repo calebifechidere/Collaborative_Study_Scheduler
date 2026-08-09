@@ -1,0 +1,45 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.streamlit/secrets.toml
+# Secrets
+.env
+.streamlit/secrets.toml
+.mcp.json
+
+# Python environment/cache
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Personal shell/system files
+.bash_profile
+.bashrc
+.gitconfig
+.profile
+.ripgreprc
+.zprofile
+.zshrc
+
+# Editor/AI configuration
+.claude/
+.idea/
+.vscode/
+
+# Logs
+*.log
+streamlit.log
+# Local development files
+.idea
+.vscode
+AGENTS.md
+
+# Screenshots may contain personal information
+screenshots/
+
+# Git submodule config if unused
+.gitmodules
