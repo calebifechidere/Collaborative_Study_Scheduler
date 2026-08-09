@@ -1,11 +1,19 @@
 import os
-from dotenv import load_dotenv
+
 import psycopg
+from dotenv import load_dotenv
 
 load_dotenv()
 
 
 def get_connection():
+    database_url = os.getenv("DATABASE_URL")
+
+    # Online deployment: Neon
+    if database_url:
+        return psycopg.connect(database_url)
+
+    # Local development: Docker PostgreSQL
     return psycopg.connect(
         host=os.getenv("DB_HOST", "localhost"),
         port=os.getenv("DB_PORT", "5432"),

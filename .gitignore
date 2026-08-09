@@ -43,3 +43,5 @@ screenshots/
 
 # Git submodule config if unused
 .gitmodules
+study_scheduler_backup.sql
+*.bak

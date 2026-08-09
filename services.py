@@ -4,18 +4,40 @@ import psycopg
 from db import execute, execute_with_row, fetch_all, fetch_one
 
 
-def register_user(full_name, email, course, student_level, password):
+def register_user(full_name, matric_number, email, course, student_level, password):
     query = """
-        INSERT INTO users (full_name, email, course, student_level, password_hash)
-        VALUES (%s, %s, %s, %s, crypt(%s, gen_salt('bf')))
+        INSERT INTO users (
+            full_name,
+            matric_number,
+            email,
+            course,
+            student_level,
+            password_hash
+        )
+        VALUES (%s, %s, %s, %s, %s, crypt(%s, gen_salt('bf')))
         RETURNING user_id
     """
+
     try:
-        row = execute_with_row(query, (full_name, email, course, student_level, password))
+        row = execute_with_row(
+            query,
+            (
+                full_name,
+                matric_number,
+                email,
+                course,
+                student_level,
+                password,
+            ),
+        )
         return {"user_id": row[0]} if row else None
+
     except psycopg.errors.UniqueViolation as exc:
-        logging.exception("Registration failed because the email already exists")
-        raise ValueError("DUPLICATE_EMAIL") from exc
+        logging.exception(
+            "Registration failed because email or matric number already exists"
+        )
+        raise ValueError("DUPLICATE_USER") from exc
+
     except Exception:
         logging.exception("Registration failed")
         raise

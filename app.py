@@ -128,44 +128,123 @@ def render_auth_page():
         with tabs[1]:
             with st.form("signup_form"):
                 full_name = st.text_input("Full name")
+
+                matric_number = st.text_input(
+                    "Matriculation Number",
+                    placeholder="e.g. 20241433872",
+                    max_chars=11
+                )
+
                 email = st.text_input("Email")
                 course = st.text_input("Course")
-                student_level = st.selectbox("Student level", ["100", "200", "300", "400", "500", "Undergraduate", "Postgraduate", "Other"])
+
+                student_level = st.selectbox(
+                    "Student level",
+                    [
+                        "100",
+                        "200",
+                        "300",
+                        "400",
+                        "500",
+                        "Undergraduate",
+                        "Postgraduate",
+                        "Other"
+                    ]
+                )
+
                 password = st.text_input("Password", type="password")
-                confirm_password = st.text_input("Confirm Password", type="password")
+                confirm_password = st.text_input(
+                    "Confirm Password",
+                    type="password"
+                )
+
                 submit = st.form_submit_button("Create account")
+
                 if submit:
+                    matric_number = matric_number.strip()
+
                     if not full_name.strip():
                         st.error("Full name is required.")
+
+                    elif not matric_number:
+                        st.error("Matriculation number is required.")
+
+                    elif len(matric_number) != 11 or not matric_number.isdigit():
+                        st.error(
+                            "Matriculation number must contain exactly 11 digits."
+                        )
+
                     elif not email.strip():
                         st.error("Email is required.")
+
                     elif not course.strip():
                         st.error("Course is required.")
-                    elif student_level not in {"100", "200", "300", "400", "500"}:
-                        st.error("Level must be 100, 200, 300, 400 or 500.")
+
+                    elif student_level not in {
+                        "100", "200", "300", "400", "500"
+                    }:
+                        st.error(
+                            "Level must be 100, 200, 300, 400 or 500."
+                        )
+
                     elif len(password) < 8:
-                        st.error("Password must contain at least 8 characters.")
+                        st.error(
+                            "Password must contain at least 8 characters."
+                        )
+
                     elif password != confirm_password:
                         st.error("Passwords do not match.")
+
                     else:
                         try:
-                            user = register_user(full_name.strip(), email.strip(), course.strip(), student_level, password)
+                            user = register_user(
+                                full_name.strip(),
+                                matric_number,
+                                email.strip(),
+                                course.strip(),
+                                student_level,
+                                password
+                            )
+
                             if user:
-                                st.session_state.current_user = {"user_id": user.get("user_id"), "full_name": full_name.strip(), "email": email.strip(), "course": course.strip(), "student_level": student_level}
-                                st.session_state.user = st.session_state.current_user
+                                st.session_state.current_user = {
+                                    "user_id": user.get("user_id"),
+                                    "full_name": full_name.strip(),
+                                    "matric_number": matric_number,
+                                    "email": email.strip(),
+                                    "course": course.strip(),
+                                    "student_level": student_level
+                                }
+
+                                st.session_state.user = (
+                                    st.session_state.current_user
+                                )
                                 st.session_state.authenticated = True
-                                st.success("Registration successful. You can now log in.")
+
+                                st.success("Registration successful.")
                                 st.rerun()
+
                             else:
-                                st.error("Unable to create account right now.")
+                                st.error(
+                                    "Unable to create account right now."
+                                )
+
                         except ValueError as exc:
-                            if str(exc) == "DUPLICATE_EMAIL":
-                                st.error("An account with that email already exists.")
+                            if str(exc) == "DUPLICATE_USER":
+                                st.error(
+                                    "An account with that email or "
+                                    "matriculation number already exists."
+                                )
                             else:
-                                st.error("Unable to create account right now.")
+                                st.error(
+                                    "Unable to create account right now."
+                                )
+
                         except Exception:
                             logging.exception("Registration failed")
-                            st.error("Unable to create account right now.")
+                            st.error(
+                                "Unable to create account right now."
+                            )
         st.markdown("</div>", unsafe_allow_html=True)
 
 
@@ -200,7 +279,19 @@ page = render_sidebar()
 
 
 def load_users():
-    return fetch_all("SELECT user_id, full_name, email, course, student_level FROM users ORDER BY full_name")
+    return fetch_all(
+        """
+        SELECT
+            user_id,
+            matric_number,
+            full_name,
+            email,
+            course,
+            student_level
+        FROM users
+        ORDER BY full_name
+        """
+    )
 
 
 def load_groups():
