@@ -28,7 +28,7 @@ from services import (
     schedule_session,
 )
 
-st.set_page_config(page_title="Collaborative Study Scheduler", page_icon="📚", layout="wide")
+st.set_page_config(page_title="Collaborative Study Scheduler", page_icon="📚", layout="wide",  initial_sidebar_state="expanded")
 
 
 def initialize_auth_state():
